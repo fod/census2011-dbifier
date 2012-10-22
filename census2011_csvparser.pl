@@ -102,7 +102,7 @@ for my $schema (keys %$data) {
     for my $table ( @tables ) {
 	my $st = join ' INTEGER, ', @{ $col_hash->{$schema}->{$table} };
 	$st .= ' INTEGER)';
-	$dbh->do("CREATE TABLE $schema.$table (geogid VARCHAR(11) PRIMARY KEY,
+	$dbh->do("CREATE TABLE $schema.$table (geogid VARCHAR PRIMARY KEY,
                                        geogtype VARCHAR(3),
                                        geogdesc VARCHAR," . $st);
 
