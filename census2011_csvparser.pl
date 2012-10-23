@@ -8,8 +8,8 @@ use Text::CSV;
 use List::Util 'first';
 use DBI;
 
-my ($dictfile, $datafile, $areatype, $dbname, $username, $password);
-my $schema = "public";
+my ($dictfile, $datafile, $username, $password);
+my ($dbname, $host, $port) = ("census2011", "localhost", 5432);
 
 GetOptions(
     "k=s" => \$dictfile,
