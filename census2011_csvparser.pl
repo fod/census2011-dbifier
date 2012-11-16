@@ -34,7 +34,7 @@ open my $fh_data, '<', $datafile;
 my $csv_data = Text::CSV->new({binary=>1})
     or die Text::CSV->error_diag();
 
-my ($data, $geogtype, $geogdesc);
+my ($data, $geogtype);
 my @cols = $csv_data->column_names($csv_data->getline($fh_data));
 
 my $col_hash;
@@ -45,7 +45,7 @@ while (my $row = $csv_data->getline_hr($fh_data)) {
     if ( $. == 2 ) {
 	$geogtype = lc $row->{GEOGTYPE};
 	$geogtype = 'co' if $geogtype eq 'cty';
-	$geogdesc = $row->{GEOGDESC};
+	# $geogdesc = $row->{GEOGDESC};
 
 	for my $col (@cols) {
 	    next if $col =~ /GEOG/;
@@ -63,6 +63,7 @@ while (my $row = $csv_data->getline_hr($fh_data)) {
     # 'GEOGID' = first field in first row of csv; not matching 'eq "GEOGID"' or m/^GEOGID/
     # -- very odd but this works around it:
     my $geogid = $row->{ (first { m/GEOGID/ } keys %$row) };
+    my $geogdesc = $row->{GEOGDESC};
 
     my ($theme, $table, $stat);
     for my $k (keys %$row) {
@@ -76,7 +77,7 @@ while (my $row = $csv_data->getline_hr($fh_data)) {
 	    # Col names - precede with '_' only if it starts with a digit
 	    $stat =~ s/^_//; $stat =~ s/^(\d)/_$1/; $stat = lc $stat;
 	    $stat =~ s/^(or)$/_or/; # 'or' is a SQL reserved word so invalid for a col name
-	    $stat =~ s/^(do)$/_do/; # 'do' is a SQL reserved word so invalid for a col name
+	    $stat =~ s/^(do)$/_do/; # 'do' is a PostgreSQL reserved word so invalid for a col name
 
 	    # replace colname key with sanitised dbase colname
 	    $row->{$stat} = delete $row->{$k};
@@ -124,4 +125,5 @@ for my $schema (keys %$data) {
 	}
     }
 }
+
 
